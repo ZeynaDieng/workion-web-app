@@ -1,0 +1,27 @@
+{
+  "name": "workion-web",
+  "version": "1.0.0",
+  "description": "Version web de l'application Workion avec Nuxt 3 pour un meilleur référencement",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^0.8.5",
+    "nuxt": "^3.6.5"
+  },
+  "dependencies": {
+    "@nuxtjs/tailwindcss": "^6.8.4",
+    "@pinia/nuxt": "^0.5.1",
+    "@types/luxon": "^3.7.1",
+    "@vueuse/nuxt": "^10.5.0",
+    "luxon": "^3.7.2",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5"
+  }
+}

@@ -1,0 +1,1 @@
+export { default } from "file:///Users/cheikhmbackegaye/Documents/Projects/workion-web/node_modules/@nuxt/vite-builder/dist/runtime/vite-node.mjs"
