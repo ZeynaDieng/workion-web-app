@@ -4,301 +4,244 @@
     class="fixed inset-0 z-50 overflow-hidden"
     @click="closeDrawer"
   >
-    <!-- Overlay -->
-    <div class="absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-300"></div>
+    <!-- Overlay avec effet de flou -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-all duration-500"></div>
     
     <!-- Drawer -->
     <div 
-      class="absolute right-0 top-0 h-full w-full md:w-1/2 lg:w-1/3 min-w-[350px] bg-white shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto"
+      class="absolute right-0 top-0 h-full w-full md:w-[480px] lg:w-[520px] bg-white shadow-2xl transform transition-all duration-500 ease-out flex flex-col"
       :class="{ 'translate-x-0': isOpen, 'translate-x-full': !isOpen }"
       @click.stop
     >
-      <!-- Header -->
-      <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-        <h2 class="text-xl font-bold text-gray-900">Profil du prestataire</h2>
+      <!-- Header avec gradient -->
+      <div class="relative bg-gradient-to-br from-[#006970] via-[#008891] to-[#20b2aa] text-white overflow-hidden">
+        <!-- Motif de fond -->
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-16 translate-x-16"></div>
+          <div class="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full translate-y-12 -translate-x-12"></div>
+        </div>
+        
+        <!-- Bouton fermer -->
         <button 
           @click="closeDrawer"
-          class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+          class="absolute top-4 right-4 z-10 p-2 hover:bg-white/20 rounded-full transition-all duration-200 group"
         >
-          <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
-      </div>
 
-      <!-- Content -->
-      <div v-if="provider" class="p-6 space-y-6">
-        <!-- Photo de profil et infos principales -->
-        <div class="text-center">
-          <div class="relative inline-block">
-            <img 
-              v-if="provider.photo?.fullUrl" 
-              :src="provider.photo.fullUrl" 
-              :alt="`${provider.firstname} ${provider.lastname}`"
-              class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-            >
-            <div v-else class="w-24 h-24 bg-gradient-to-br from-[#006970] to-[#008891] rounded-full flex items-center justify-center border-4 border-white shadow-lg">
-              <span class="text-2xl font-bold text-white">
-                {{ provider.firstname.charAt(0) }}{{ provider.lastname.charAt(0) }}
-              </span>
-            </div>
-            
-            <!-- Badge de disponibilité -->
-            <div v-if="provider.openToWork" class="absolute -bottom-1 -right-1">
-              <div class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-                <span class="w-2 h-2 bg-green-300 rounded-full mr-1 animate-pulse"></span>
-                Disponible
+        <!-- Profil principal -->
+        <div v-if="provider" class="relative px-6 pt-8 pb-6 text-center">
+          <!-- Avatar avec effet glassmorphism -->
+          <div class="relative inline-block mb-6">
+            <div class="relative">
+              <img 
+                v-if="provider.photo?.fullUrl" 
+                :src="provider.photo.fullUrl" 
+                :alt="`${provider.firstname} ${provider.lastname}`"
+                class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-2xl"
+              >
+              <div v-else class="w-32 h-32 bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white shadow-2xl">
+                <span class="text-3xl font-bold text-white">
+                  {{ provider.firstname.charAt(0) }}{{ provider.lastname.charAt(0) }}
+                </span>
+              </div>
+              
+              <!-- Badge de disponibilité moderne -->
+              <div v-if="provider.openToWork" class="absolute -bottom-2 -right-2">
+                <div class="bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center shadow-lg">
+                  <div class="w-2 h-2 bg-emerald-300 rounded-full mr-2 animate-pulse"></div>
+                  Disponible
+                </div>
+              </div>
+              <div v-else-if="provider.openToWork === false" class="absolute -bottom-2 -right-2">
+                <div class="bg-rose-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg">
+                  Indisponible
+                </div>
               </div>
             </div>
           </div>
           
-          <div class="mx-auto flex justify-center items-center">
-            <h3 class="mt-4 text-2xl font-bold text-gray-900">
-            {{ provider.firstname }} {{ provider.lastname }}
+          <!-- Nom et certification -->
+          <div class="mb-4">
+            <h3 class="text-3xl font-bold text-white mb-2 flex items-center justify-center">
+              {{ provider.firstname }} {{ provider.lastname }}
+              <div v-if="provider.certification?.status === 'approved'" class="ml-3 bg-white/20 backdrop-blur-sm rounded-full p-1.5">
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
             </h3>
-            <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20" v-if="provider?.certification?.status === 'approved'">
-                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-              </svg>
-          </div>
-
-          <div class="mx-auto flex justify-center items-center text-gray-500 text-sm">
-            <div class="w-5 h-5 mr-2 text-[#006970]">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            
+            <!-- Localisation -->
+            <div class="flex items-center justify-center text-white/80 text-sm mb-3">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
+              {{ provider?.addresses?.[0]?.address || 'Localisation non disponible' }}
             </div>
-            <span class="truncate">{{ provider?.addresses?.[0]?.address || 'Localisation non disponible' }}</span>
-          </div>
-
-          <div v-if="provider.openToWork == null && provider.openToWorkLastUpdate != null">
-            <div class="mx-auto flex justify-center items-center text-gray-500 text-sm">
-              <div class="w-5 h-5 mr-2 text-[#006970]"></div>
-              <span class="truncate">Dernière dispo: {{ formatTimeDifference(provider.openToWorkLastUpdate) }}</span>
-            </div>
-          </div>
-
-          <!-- Tags du prestataire -->
-          <div v-if="provider.rating || provider.isOfflineProvider || (provider.tags && provider.tags.length > 0)" class="mt-3 flex flex-wrap gap-2 justify-center">
-            <span 
-              class="bg-yellow-50 text-yellow-500 border border-yellow-200 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium px-2"
-            >
-            <svg class="w-5 h-5 fill-current mr-1" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-              {{ provider.rating }}
-            </span>
-
-            <span v-if="true" class="bg-orange-100 text-orange-500 px-2 py-1 rounded-full text-xs font-medium flex items-center">
-              Hors appli
-            </span>
-
-            <span 
-              v-for="tag in (provider?.tags || [])" 
-              :key="tag.name"
-              class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-              :class="getTagClasses(tag.appreciation)"
-            >
-              <svg 
-                v-if="tag.appreciation === 'POSITIVE'" 
-                class="w-3 h-3 mr-1" 
-                fill="currentColor" 
-                viewBox="0 0 20 20"
-              >
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-              </svg>
-              <svg 
-                v-else-if="tag.appreciation === 'NEGATIVE'" 
-                class="w-3 h-3 mr-1" 
-                fill="currentColor" 
-                viewBox="0 0 20 20"
-              >
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-              </svg>
-              <svg 
-                v-else 
-                class="w-3 h-3 mr-1" 
-                fill="currentColor" 
-                viewBox="0 0 20 20"
-              >
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-              </svg>
-              {{ tag.name }}
-            </span>
-          </div>
-          
-          <p v-if="provider.biography" class="mt-3 text-gray-600 text-sm leading-relaxed">
-            {{ provider.biography }}
-          </p>
-        </div>
-
-        <!-- Services et spécialités -->
-        <div v-if="provider.services && provider.services.length > 0" class="space-y-3">
-          <h4 class="text-lg font-semibold text-gray-900 flex items-center">
-            <svg class="w-5 h-5 text-[#006970] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-            </svg>
-            Services proposés
-          </h4>
-          <div class="flex flex-wrap gap-2">
-            <span 
-              v-for="service in provider.services" 
-              :key="service.id"
-              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#006970] text-white"
-            >
-              {{ service.name }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Spécialités -->
-        <div v-if="provider.specialties && provider.specialties.length > 0" class="space-y-3">
-          <h4 class="text-lg font-semibold text-gray-900 flex items-center">
-            <svg class="w-5 h-5 text-[#006970] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-            </svg>
-            Spécialités
-          </h4>
-          <div class="grid grid-cols-1 gap-2">
-            <div 
-              v-for="specialty in provider.specialties" 
-              :key="specialty.name"
-              class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-            >
-              <div class="flex items-center">
-                <div class="w-2 h-2 bg-[#006970] rounded-full mr-3"></div>
-                <span class="font-medium text-gray-900">{{ specialty.name }}</span>
+            
+            <!-- Tags du prestataire -->
+            <div v-if="provider.rating || provider.isOfflineProvider || (provider.tags && provider.tags.length > 0)" class="flex flex-wrap gap-2 justify-center mb-4">
+              <div v-if="provider.rating" class="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center">
+                <svg class="w-4 h-4 fill-current mr-1.5" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+                {{ provider.rating }}/5
               </div>
-              <span v-if="specialty.experience" class="text-sm text-gray-500">{{ specialty.experience }}</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- Tarification -->
-        <div v-if="provider.pricing" class="space-y-3">
-          <h4 class="text-lg font-semibold text-gray-900 flex items-center">
-            <svg class="w-5 h-5 text-[#006970] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-            </svg>
-            Tarification
-          </h4>
-          <div class="bg-gray-50 rounded-lg p-4">
-            <div class="grid grid-cols-2 gap-4">
-              <div v-if="provider.pricing.hourlyRate" class="text-center">
-                <div class="text-2xl font-bold text-[#006970]">{{ provider.pricing.hourlyRate }}€</div>
-                <div class="text-sm text-gray-600">par heure</div>
+              <div v-if="provider.isOfflineProvider" class="bg-amber-500/90 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                Hors appli
               </div>
-              <div v-if="provider.pricing.dailyRate" class="text-center">
-                <div class="text-2xl font-bold text-[#006970]">{{ provider.pricing.dailyRate }}€</div>
-                <div class="text-sm text-gray-600">par jour</div>
+
+              <div 
+                v-for="tag in (provider?.tags || []).slice(0, 3)" 
+                :key="tag.name"
+                class="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center"
+              >
+                <svg v-if="tag.appreciation === 'POSITIVE'" class="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <svg v-else-if="tag.appreciation === 'NEGATIVE'" class="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                {{ tag.name }}
               </div>
             </div>
-            <p v-if="provider.pricing.description" class="mt-3 text-sm text-gray-600">
-              {{ provider.pricing.description }}
-            </p>
+            
+            <!-- Dernière disponibilité -->
+            <div v-if="provider.openToWork == null && provider.openToWorkLastUpdate != null" class="text-white/80 text-sm">
+              <div class="flex items-center justify-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Dernière dispo: {{ formatTimeDifference(provider.openToWorkLastUpdate) }}
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Réalisations -->
-        <div v-if="provider.portfolio && provider.portfolio.length > 0" class="space-y-3">
-          <h4 class="text-lg font-semibold text-gray-900 flex items-center">
-            <svg class="w-5 h-5 text-[#006970] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            Réalisations
-          </h4>
-          <div class="grid grid-cols-2 gap-3">
-            <div 
-              v-for="item in provider.portfolio" 
-              :key="item.id"
-              class="relative group cursor-pointer"
-            >
-              <img 
-                :src="item.imageUrl" 
-                :alt="item.title"
-                class="w-full h-24 object-cover rounded-lg"
-              >
-              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+      <!-- Contenu principal avec scroll -->
+      <div v-if="provider" class="flex-1 overflow-y-auto bg-gray-50">
+        <div class="px-6 py-6 space-y-6">
+          <!-- Biographie -->
+          <div v-if="provider.biography" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h4 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+              <div class="w-8 h-8 bg-gradient-to-br from-[#006970] to-[#008891] rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
               </div>
+              À propos
+            </h4>
+            <p class="text-gray-700 leading-relaxed">{{ provider.biography }}</p>
+          </div>
+
+          <!-- Services -->
+          <div v-if="provider.services && provider.services.length > 0" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <div class="w-8 h-8 bg-gradient-to-br from-[#006970] to-[#008891] rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+              </div>
+              Services proposés
+            </h4>
+            <div class="flex flex-wrap gap-2">
+              <span 
+                v-for="service in provider.services" 
+                :key="service.id"
+                class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-[#006970] to-[#008891] text-white shadow-sm hover:shadow-md transition-shadow"
+              >
+                {{ service.name }}
+              </span>
             </div>
           </div>
-        </div>
 
-        <!-- Langues parlées -->
-        <div v-if="provider.languages && provider.languages.length > 0" class="space-y-2">
-          <h5 class="text-lg font-semibold text-gray-900 flex items-center">
-            <svg class="w-4 h-4 text-[#006970] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
-            </svg>
-            Langues parlées
-          </h5>
-          <div class="flex flex-wrap gap-1">
-            <span 
-              v-for="language in provider.languages" 
-              :key="language"
-              class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800"
-            >
-              {{ language }}
-            </span>
+          <!-- Langues parlées -->
+          <div v-if="provider.languages && provider.languages.length > 0" class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                </svg>
+              </div>
+              Langues parlées
+            </h4>
+            <div class="flex flex-wrap gap-2">
+              <span 
+                v-for="language in provider.languages" 
+                :key="language"
+                class="inline-flex items-center px-3 py-2 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"
+              >
+                {{ language }}
+              </span>
+            </div>
           </div>
+
+          <!-- Portfolio et réalisations -->
+          <ProviderRealizations :partner-id="provider.id" />
+
+          <!-- Avis et évaluations -->
+          <ProviderReviews :partner-id="provider.id" />
         </div>
+      </div>
 
-        <!-- Portfolio et réalisations -->
-        <ProviderRealizations :partner-id="provider.id" />
-
-        <!-- Avis et évaluations -->
-        <ProviderReviews :partner-id="provider.id" />
-
-        <!-- Statistiques et informations -->
-        <div class="space-y-4">
-          <!-- Statistiques principales -->
-          <!-- <div class="grid grid-cols-3 gap-4">
-            <div class="text-center bg-gray-50 rounded-lg p-3">
-              <div class="text-2xl font-bold text-[#006970]">{{ provider.completedJobs || 0 }}</div>
-              <div class="text-xs text-gray-600">Missions</div>
-            </div>
-            <div class="text-center bg-gray-50 rounded-lg p-3">
-              <div class="text-2xl font-bold text-[#006970]">{{ provider.experienceYears || 0 }}</div>
-              <div class="text-xs text-gray-600">Années d'exp.</div>
-            </div>
-            <div class="text-center bg-gray-50 rounded-lg p-3">
-              <div class="text-2xl font-bold text-[#006970]">{{ provider.responseTime || '2h' }}</div>
-              <div class="text-xs text-gray-600">Temps réponse</div>
-            </div>
-          </div> -->
-
-        </div>
-
-        <!-- Boutons d'action -->
-        <div class="sticky bottom-0 bg-white pt-4 border-t border-gray-200 space-y-3">
-          <button class="w-full bg-gradient-to-r from-[#006970] to-[#008891] hover:from-[#008891] hover:to-[#20b2aa] text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Boutons d'action modernes -->
+      <div class="bg-white border-t border-gray-100 p-6">
+        <div class="space-y-3">
+          <button 
+            @click="handleContact"
+            class="w-full bg-gradient-to-r from-[#006970] via-[#008891] to-[#20b2aa] hover:from-[#005560] hover:via-[#006970] hover:to-[#008891] text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center group"
+          >
+            <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
             </svg>
-            Contacter
+            <span class="text-lg">Contacter maintenant</span>
           </button>
           
-          <NuxtLink 
+          <!-- <NuxtLink 
             :to="`/prestataires/${provider.slug || provider.id}`"
-            class="block w-full bg-white border-2 border-[#006970] text-[#006970] hover:bg-[#006970] hover:text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 text-center"
+            class="block w-full bg-white border-2 border-gray-200 text-gray-700 hover:border-[#006970] hover:text-[#006970] font-semibold py-4 px-6 rounded-2xl transition-all duration-300 text-center group"
           >
-            Voir le profil complet
-          </NuxtLink>
+            <div class="flex items-center justify-center">
+              <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+              <span class="text-lg">Voir le profil complet</span>
+            </div>
+          </NuxtLink> -->
         </div>
       </div>
     </div>
+
+    <!-- Modal d'authentification -->
+    <AuthModal 
+      :is-open="isAuthModalOpen"
+      @close="closeAuthModal"
+      @success="handleAuthSuccess"
+    />
+
+    <!-- Modal de souscription -->
+    <SubscriptionModal 
+      :is-open="isSubscriptionModalOpen"
+      @close="closeSubscriptionModal"
+      @success="handleSubscriptionSuccess"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { DateTime } from 'luxon'
 import ProviderReviews from './ProviderReviews.vue'
 import ProviderRealizations from './ProviderRealizations.vue'
+import AuthModal from './AuthModal.vue'
+import SubscriptionModal from './SubscriptionModal.vue'
+import { useSubscription } from '../composables/useSubscription'
 
 interface Provider {
   id: string
@@ -368,8 +311,81 @@ const emit = defineEmits<{
   close: []
 }>()
 
+// État des modals
+const isAuthModalOpen = ref(false)
+const isSubscriptionModalOpen = ref(false)
+
+// Composable de souscription
+const { checkActiveSubscription } = useSubscription()
+
 const closeDrawer = () => {
   emit('close')
+}
+
+// Gestion de l'authentification et souscription
+const handleContact = async () => {
+  // Vérifier si l'utilisateur est connecté
+  const token = process.client ? localStorage.getItem('workion_token') : null
+  
+  if (!token) {
+    // Ouvrir le modal d'authentification
+    isAuthModalOpen.value = true
+    return
+  }
+
+  // Utilisateur connecté, vérifier la souscription
+  const userStr = process.client ? localStorage.getItem('workion_user') : null
+  if (!userStr) {
+    isAuthModalOpen.value = true
+    return
+  }
+
+  const user = JSON.parse(userStr)
+  const hasActiveSubscription = await checkActiveSubscription(user.id)
+  console.log('hasActiveSubscription', hasActiveSubscription)
+  if (!hasActiveSubscription) {
+    // Ouvrir le modal de souscription
+    isSubscriptionModalOpen.value = true
+  } else {
+    // Utilisateur connecté avec souscription active
+    // TODO: Implémenter la logique de contact (chat, message, etc.)
+    console.log('Contacter le prestataire:', props.provider?.id)
+    alert(`Vous pouvez maintenant contacter ${props.provider?.firstname} ${props.provider?.lastname}`)
+  }
+}
+
+const closeAuthModal = () => {
+  isAuthModalOpen.value = false
+}
+
+const handleAuthSuccess = async (user: any) => {
+  console.log('Utilisateur connecté:', user)
+  // Fermer le modal d'authentification
+  isAuthModalOpen.value = false
+  
+  // Vérifier la souscription après connexion
+  const hasActiveSubscription = await checkActiveSubscription(user.id)
+  
+  if (!hasActiveSubscription) {
+    // Ouvrir le modal de souscription
+    isSubscriptionModalOpen.value = true
+  } else {
+    // Utilisateur connecté avec souscription active
+    alert(`Bienvenue ${user.firstname} ! Vous pouvez maintenant contacter ce prestataire.`)
+  }
+}
+
+const closeSubscriptionModal = () => {
+  isSubscriptionModalOpen.value = false
+}
+
+const handleSubscriptionSuccess = () => {
+  console.log('Souscription réussie')
+  // Fermer le modal de souscription
+  isSubscriptionModalOpen.value = false
+  
+  // Afficher un message de succès
+  alert('Souscription activée ! Vous pouvez maintenant contacter nos prestataires.')
 }
 
 const formatDate = (dateString: string) => {

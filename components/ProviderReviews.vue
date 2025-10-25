@@ -139,7 +139,8 @@ import { ref, computed, onMounted } from 'vue'
 import { DateTime } from 'luxon'
 
 // Configuration API - peut être déplacée vers un composable plus tard
-const API_BASE_URL = 'https://workion.orionsn.com/api'
+const config = useRuntimeConfig()
+const API_BASE_URL = config.public.apiBase
 
 interface Review {
   id: string

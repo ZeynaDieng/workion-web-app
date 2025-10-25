@@ -188,7 +188,8 @@ interface Props {
 const props = defineProps<Props>()
 
 // Configuration API
-const API_BASE_URL = 'https://workion.orionsn.com/api'
+const config = useRuntimeConfig()
+const API_BASE_URL = config.public.apiBase
 
 // État réactif
 const realizations = ref<Realization[]>([])

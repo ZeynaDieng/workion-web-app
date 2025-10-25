@@ -1,3 +1,5 @@
+import { useRuntimeConfig } from 'nuxt/app'
+import { defineStore } from 'pinia'
 import type { 
   ApiResponse, 
   PaginatedResponse, 
