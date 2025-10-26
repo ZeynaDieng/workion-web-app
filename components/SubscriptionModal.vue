@@ -194,13 +194,29 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Modal de statut de paiement -->
+    <PaymentStatusModal
+      :is-open="isPaymentStatusModalOpen"
+      :status="paymentStatus"
+      :error-message="paymentErrorMessage"
+      :is-connected="isConnected"
+      :is-listening="isListening"
+      :client-id="getCurrentUserId()"
+      :show-debug-info="true"
+      @close="handlePaymentStatusClose"
+      @cancel="handlePaymentStatusCancel"
+      @retry="handlePaymentStatusRetry"
+    />
   </Teleport>
 </template>
 
 <script setup lang="ts">
 import type { Offer, PaymentMethod } from '~/types/subscription'
-import { useSubscription } from '../composables/useSubscription';
-import { onMounted, ref, watch } from 'vue';
+import { useSubscription } from '../composables/useSubscription'
+import { usePaymentSocket } from '../composables/usePaymentSocket'
+import { onMounted, ref, watch } from 'vue'
+import PaymentStatusModal from './PaymentStatusModal.vue'
 
 interface Props {
   isOpen: boolean
@@ -224,9 +240,22 @@ const {
   initiatePayment 
 } = useSubscription()
 
+const { 
+  isConnected, 
+  isListening, 
+  connect: connectSocket, 
+  disconnect: disconnectSocket 
+} = usePaymentSocket()
+
 const currentStep = ref<'offers' | 'payment'>('offers')
 const selectedOffer = ref<Offer | null>(null)
 const selectedPaymentMethod = ref<PaymentMethod | null>(null)
+
+// État du modal de statut de paiement
+const isPaymentStatusModalOpen = ref(false)
+const paymentStatus = ref<'waiting' | 'success' | 'error'>('waiting')
+const paymentErrorMessage = ref<string>('')
+const currentTransactionId = ref<string>('')
 
 // Charger les données au montage
 onMounted(async () => {
@@ -265,19 +294,109 @@ const processPayment = async () => {
 
     const result = await initiatePayment(paymentData)
 
-    if (result.paymentUrl) {
-      // Rediriger vers l'URL de paiement
+    if (result.paymentUrl && result.transactionId) {
+      // Stocker l'ID de transaction
+      currentTransactionId.value = result.transactionId
+      
+      // Fermer le modal de sélection
+      closeModal()
+      
+      // Ouvrir le modal de statut de paiement
+      paymentStatus.value = 'waiting'
+      isPaymentStatusModalOpen.value = true
+      
+      // Récupérer l'ID de l'utilisateur connecté
+      const userStr = localStorage.getItem('workion_user')
+      if (userStr) {
+        const user = JSON.parse(userStr)
+        
+        // Connecter au WebSocket avec l'ID utilisateur comme clientId
+        connectSocket(user.id, {
+          onSuccess: handlePaymentSuccess,
+          onError: handlePaymentError,
+          onConnected: () => {
+            console.log('WebSocket connecté pour l\'utilisateur:', user.id)
+          },
+          onDisconnected: () => {
+            console.log('WebSocket déconnecté')
+          }
+        })
+      } else {
+        console.error('Utilisateur non connecté')
+        paymentErrorMessage.value = 'Erreur: utilisateur non connecté'
+        paymentStatus.value = 'error'
+        isPaymentStatusModalOpen.value = true
+        return
+      }
+      
+      // Ouvrir l'URL de paiement dans un nouvel onglet
       window.open(result.paymentUrl, '_blank')
       
-      // Optionnel: Fermer le modal et émettre le succès
-      emit('success')
-      closeModal()
     } else {
       console.error('Erreur de paiement:', result.message)
+      paymentErrorMessage.value = result.message || 'Erreur lors de l\'initiation du paiement'
+      paymentStatus.value = 'error'
+      isPaymentStatusModalOpen.value = true
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Erreur lors du traitement du paiement:', err)
+    paymentErrorMessage.value = err.message || 'Erreur lors du traitement du paiement'
+    paymentStatus.value = 'error'
+    isPaymentStatusModalOpen.value = true
   }
+}
+
+// Gestion des événements WebSocket
+const handlePaymentSuccess = () => {
+  console.log('✅ Paiement confirmé via WebSocket')
+  paymentStatus.value = 'success'
+  
+  // Déconnecter le WebSocket
+  disconnectSocket()
+  
+  // Attendre 2 secondes puis fermer et émettre le succès
+  setTimeout(() => {
+    isPaymentStatusModalOpen.value = false
+    emit('success')
+  }, 2000)
+}
+
+const handlePaymentError = (message: string) => {
+  console.log('❌ Paiement échoué via WebSocket:', message)
+  paymentStatus.value = 'error'
+  paymentErrorMessage.value = message
+  
+  // Déconnecter le WebSocket
+  disconnectSocket()
+}
+
+// Gestion des actions du modal de statut
+const handlePaymentStatusClose = () => {
+  isPaymentStatusModalOpen.value = false
+  disconnectSocket()
+}
+
+const handlePaymentStatusCancel = () => {
+  isPaymentStatusModalOpen.value = false
+  disconnectSocket()
+  // Optionnel: annuler le paiement côté serveur
+}
+
+const handlePaymentStatusRetry = () => {
+  isPaymentStatusModalOpen.value = false
+  disconnectSocket()
+  // Relancer le processus de paiement
+  processPayment()
+}
+
+// Récupérer l'ID de l'utilisateur connecté
+const getCurrentUserId = (): string => {
+  const userStr = localStorage.getItem('workion_user')
+  if (userStr) {
+    const user = JSON.parse(userStr)
+    return user.id || 'unknown'
+  }
+  return 'not-connected'
 }
 
 const formatPrice = (price: number): string => {

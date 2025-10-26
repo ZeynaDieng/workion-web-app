@@ -18,22 +18,37 @@ export const useApiStore = defineStore('api', () => {
   // Base API URL
   const baseURL = config.public.apiBase
 
-  // Generic API call function
+  // Helper function to get auth token
+  const getAuthToken = (): string | null => {
+    if (process.client) {
+      return localStorage.getItem('workion_token')
+    }
+    return null
+  }
+
+  // Generic API call function with auth interceptor
   const apiCall = async <T>(
     endpoint: string, 
     options: RequestInit = {}
   ): Promise<T> => {
     const url = `${baseURL}${endpoint}`
     
-    const defaultHeaders = {
+    // Get auth token and add to headers if available
+    const token = getAuthToken()
+    const defaultHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers
+      ...options.headers as Record<string, string>
+    }
+
+    // Add Authorization header if token exists
+    if (token) {
+      defaultHeaders['Authorization'] = `Bearer ${token}`
     }
 
     console.log('🚀 API Call:', {
       url,
       method: options.method || 'GET',
-      headers: defaultHeaders,
+      headers: { ...defaultHeaders, Authorization: token ? 'Bearer [HIDDEN]' : undefined },
       body: options.body
     })
 
@@ -44,6 +59,17 @@ export const useApiStore = defineStore('api', () => {
       })
 
       // console.log('📡 API Response Status:', response.status, response.statusText)
+
+      // Handle 401 Unauthorized - token expired or invalid
+      if (response.status === 401) {
+        console.warn('🔑 Token expired or invalid, clearing auth data')
+        if (process.client) {
+          localStorage.removeItem('workion_token')
+          localStorage.removeItem('workion_user')
+          // Optionally redirect to login
+          // window.location.href = '/login'
+        }
+      }
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -126,7 +152,7 @@ export const useApiStore = defineStore('api', () => {
     if (params?.location) searchParams.append('location', params.location)
     if (params?.certified !== undefined) searchParams.append('certified', params.certified.toString())
     if (params?.services?.length) {
-      params.services.forEach(service => searchParams.append('services[]', service))
+      searchParams.append('services', params.services.join(','));
     }
     
     const query = searchParams.toString()

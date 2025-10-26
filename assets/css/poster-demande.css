@@ -1,0 +1,134 @@
+/* Styles personnalisés pour la page poster-demande */
+
+/* Animation pour les étapes */
+.step-enter-active,
+.step-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
+.step-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.step-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+/* Styles pour les inputs avec focus amélioré */
+.modern-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#006970] focus:border-transparent transition-all duration-200;
+}
+
+.modern-input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 105, 112, 0.1);
+}
+
+/* Styles pour les boutons de service */
+.service-card {
+  @apply flex flex-col items-center p-6 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md;
+}
+
+.service-card.selected {
+  @apply border-[#006970] bg-[#006970]/5 text-[#006970] shadow-md;
+  animation: pulse-selection 0.3s ease-in-out;
+}
+
+.service-card:not(.selected) {
+  @apply border-gray-200 hover:border-gray-300;
+}
+
+@keyframes pulse-selection {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Styles pour la barre de progression */
+.progress-bar {
+  background: linear-gradient(90deg, #006970 0%, #008891 100%);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Styles pour les boutons de navigation */
+.nav-button {
+  @apply flex items-center px-8 py-3 bg-gradient-to-r from-[#006970] to-[#008891] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg transform hover:-translate-y-0.5;
+}
+
+.nav-button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.nav-button:hover:not(:disabled) {
+  box-shadow: 0 10px 25px rgba(0, 105, 112, 0.3);
+}
+
+/* Styles pour les checkboxes personnalisées */
+.modern-checkbox {
+  @apply w-5 h-5 text-[#006970] border-gray-300 rounded focus:ring-[#006970] focus:ring-2;
+}
+
+/* Animation pour les sections */
+.section-fade-enter-active,
+.section-fade-leave-active {
+  transition: opacity 0.4s ease-in-out;
+}
+
+.section-fade-enter-from,
+.section-fade-leave-to {
+  opacity: 0;
+}
+
+/* Styles pour les tooltips */
+.tooltip {
+  @apply absolute z-10 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg;
+  transform: translateX(-50%);
+  bottom: 100%;
+  left: 50%;
+  margin-bottom: 8px;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1f2937 transparent transparent transparent;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .service-card {
+    @apply p-4;
+  }
+  
+  .nav-button {
+    @apply px-6 py-2.5 text-sm;
+  }
+}
+
+/* Animation pour le loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Styles pour les messages d'erreur */
+.error-message {
+  @apply text-red-600 text-sm mt-2 p-3 bg-red-50 rounded-lg border border-red-200;
+}
+
+/* Styles pour les messages de succès */
+.success-message {
+  @apply text-green-600 text-sm mt-2 p-3 bg-green-50 rounded-lg border border-green-200;
+}

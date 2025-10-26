@@ -195,12 +195,18 @@
         <div class="space-y-3">
           <button 
             @click="handleContact"
-            class="w-full bg-gradient-to-r from-[#006970] via-[#008891] to-[#20b2aa] hover:from-[#005560] hover:via-[#006970] hover:to-[#008891] text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center group"
+            :disabled="isContactLoading"
+            class="w-full bg-gradient-to-r from-[#006970] via-[#008891] to-[#20b2aa] hover:from-[#005560] hover:via-[#006970] hover:to-[#008891] text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Spinner de chargement -->
+            <div v-if="isContactLoading" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+            <!-- Icône normale -->
+            <svg v-else class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
             </svg>
-            <span class="text-lg">Contacter maintenant</span>
+            <span class="text-lg">
+              {{ isContactLoading ? 'Connexion sécurisée...' : 'Contacter maintenant' }}
+            </span>
           </button>
           
           <!-- <NuxtLink 
@@ -242,11 +248,13 @@ import ProviderRealizations from './ProviderRealizations.vue'
 import AuthModal from './AuthModal.vue'
 import SubscriptionModal from './SubscriptionModal.vue'
 import { useSubscription } from '../composables/useSubscription'
+import { useSecureContact } from '../composables/useSecureContact'
 
 interface Provider {
   id: string
   firstname: string
   lastname: string
+  phone: string
   biography?: string
   isOfflineProvider?: boolean
   photo?: {
@@ -317,9 +325,32 @@ const isSubscriptionModalOpen = ref(false)
 
 // Composable de souscription
 const { checkActiveSubscription } = useSubscription()
+const { contactProviderSecurely, isLoading: isContactLoading, error: contactError } = useSecureContact()
 
 const closeDrawer = () => {
   emit('close')
+}
+
+// Fonction pour contacter via WhatsApp de manière sécurisée
+const contactViaWhatsApp = async () => {
+  if (!props.provider?.id) {
+    console.error('ID du prestataire non disponible')
+    alert('Erreur: Informations du prestataire non disponibles')
+    return
+  }
+
+  const providerName = `${props.provider.firstname} ${props.provider.lastname}`
+  
+  try {
+    const success = await contactProviderSecurely(props.provider.id, providerName)
+    
+    if (!success && contactError.value) {
+      alert(`Erreur: ${contactError.value}`)
+    }
+  } catch (error) {
+    console.error('Erreur lors du contact sécurisé:', error)
+    alert('Erreur lors de la tentative de contact. Veuillez réessayer.')
+  }
 }
 
 // Gestion de l'authentification et souscription
@@ -347,10 +378,8 @@ const handleContact = async () => {
     // Ouvrir le modal de souscription
     isSubscriptionModalOpen.value = true
   } else {
-    // Utilisateur connecté avec souscription active
-    // TODO: Implémenter la logique de contact (chat, message, etc.)
-    console.log('Contacter le prestataire:', props.provider?.id)
-    alert(`Vous pouvez maintenant contacter ${props.provider?.firstname} ${props.provider?.lastname}`)
+    // Utilisateur connecté avec souscription active - Rediriger vers WhatsApp
+    contactViaWhatsApp()
   }
 }
 
@@ -370,8 +399,8 @@ const handleAuthSuccess = async (user: any) => {
     // Ouvrir le modal de souscription
     isSubscriptionModalOpen.value = true
   } else {
-    // Utilisateur connecté avec souscription active
-    alert(`Bienvenue ${user.firstname} ! Vous pouvez maintenant contacter ce prestataire.`)
+    // Utilisateur connecté avec souscription active - Rediriger vers WhatsApp
+    contactViaWhatsApp()
   }
 }
 
@@ -384,8 +413,8 @@ const handleSubscriptionSuccess = () => {
   // Fermer le modal de souscription
   isSubscriptionModalOpen.value = false
   
-  // Afficher un message de succès
-  alert('Souscription activée ! Vous pouvez maintenant contacter nos prestataires.')
+  // Rediriger directement vers WhatsApp après souscription
+  contactViaWhatsApp()
 }
 
 const formatDate = (dateString: string) => {

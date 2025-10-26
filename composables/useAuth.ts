@@ -228,6 +228,17 @@ export const useAuth = () => {
     }
   }
 
+  // Obtenir le token d'authentification
+  const getAuthToken = (): string | null => {
+    return authState.value.token || (process.client ? localStorage.getItem('workion_token') : null)
+  }
+
+  // Obtenir les headers d'authentification
+  const getAuthHeaders = (): Record<string, string> => {
+    const token = getAuthToken()
+    return token ? { 'Authorization': `Bearer ${token}` } : {}
+  }
+
   return {
     // État
     user: computed(() => authState.value.user),
@@ -244,6 +255,8 @@ export const useAuth = () => {
     hasRole,
     forgotPassword,
     resetPassword,
-    refreshToken
+    refreshToken,
+    getAuthToken,
+    getAuthHeaders
   }
 }

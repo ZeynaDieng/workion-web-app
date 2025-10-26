@@ -50,6 +50,7 @@ export default defineNuxtConfig({
     apiSecret: process.env.API_SECRET,
     // Public keys (exposed to client-side)
     public: {
+      phoneEncryptionKey: process.env.PHONE_ENCRYPTION_KEY,
       apiBase: process.env.API_BASE_URL || 'http://localhost:3000',
       appUrl: process.env.APP_URL || 'http://localhost:3001'
     }

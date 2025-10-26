@@ -44,20 +44,20 @@
 
         <!-- Actions -->
         <div class="space-y-4">
-          <NuxtLink 
+          <!--<NuxtLink 
             to="/demandes" 
             class="w-full btn-primary block text-center"
           >
             Voir toutes les demandes
           </NuxtLink>
-          
+           
           <NuxtLink 
             to="/prestataires" 
             class="w-full btn-secondary block text-center"
           >
             Parcourir les prestataires
           </NuxtLink>
-          
+           -->
           <NuxtLink 
             to="/" 
             class="block text-blue-600 hover:text-blue-800 font-medium"

@@ -27,34 +27,34 @@
 
         <!-- Navigation Desktop moderne -->
         <nav class="hidden lg:flex items-center space-x-1">
-          <NuxtLink 
+          <!-- <NuxtLink 
             to="/services" 
             class="relative px-4 py-2 text-gray-700 hover:text-[#006970] font-semibold transition-all duration-300 rounded-xl hover:bg-gradient-to-r hover:from-[#006970]/5 hover:to-[#008891]/5 group"
           >
             <span class="relative z-10">Services</span>
             <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-[#006970] to-[#008891] group-hover:w-full group-hover:left-0 transition-all duration-300"></div>
-          </NuxtLink>
-          <NuxtLink 
+          </NuxtLink> -->
+          <!-- <NuxtLink 
             to="/prestataires" 
             class="relative px-4 py-2 text-gray-700 hover:text-[#006970] font-semibold transition-all duration-300 rounded-xl hover:bg-gradient-to-r hover:from-[#006970]/5 hover:to-[#008891]/5 group"
           >
             <span class="relative z-10">Prestataires</span>
             <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-[#006970] to-[#008891] group-hover:w-full group-hover:left-0 transition-all duration-300"></div>
-          </NuxtLink>
-          <NuxtLink 
+          </NuxtLink> -->
+          <!-- <NuxtLink 
             to="/demandes" 
             class="relative px-4 py-2 text-gray-700 hover:text-[#006970] font-semibold transition-all duration-300 rounded-xl hover:bg-gradient-to-r hover:from-[#006970]/5 hover:to-[#008891]/5 group"
           >
             <span class="relative z-10">Demandes</span>
             <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-[#006970] to-[#008891] group-hover:w-full group-hover:left-0 transition-all duration-300"></div>
-          </NuxtLink>
-          <NuxtLink 
+          </NuxtLink> -->
+          <!-- <NuxtLink 
             to="/comment-ca-marche" 
             class="relative px-4 py-2 text-gray-700 hover:text-[#006970] font-semibold transition-all duration-300 rounded-xl hover:bg-gradient-to-r hover:from-[#006970]/5 hover:to-[#008891]/5 group"
           >
             <span class="relative z-10">Comment ça marche</span>
             <div class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-[#006970] to-[#008891] group-hover:w-full group-hover:left-0 transition-all duration-300"></div>
-          </NuxtLink>
+          </NuxtLink> -->
         </nav>
 
         <!-- Actions modernes -->
@@ -71,7 +71,7 @@
           </NuxtLink>
           
           <!-- Bouton Devenir prestataire -->
-          <NuxtLink 
+          <!-- <NuxtLink 
             to="/devenir-prestataire" 
             class="hidden md:inline-flex items-center px-6 py-3 bg-white border-2 border-[#006970] text-[#006970] hover:bg-[#006970] hover:text-white font-bold rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 group"
           >
@@ -79,7 +79,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"></path>
             </svg>
             <span class="text-sm">Devenir prestataire</span>
-          </NuxtLink>
+          </NuxtLink> -->
 
           <!-- Menu mobile moderne -->
           <button 
@@ -156,7 +156,7 @@
             </svg>
             Poster une demande
           </NuxtLink>
-          <NuxtLink 
+          <!-- <NuxtLink 
             to="/devenir-prestataire" 
             class="flex items-center justify-center w-full py-4 px-6 bg-white border-2 border-[#006970] text-[#006970] hover:bg-[#006970] hover:text-white font-bold rounded-2xl shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 group"
             @click="closeMobileMenu"
@@ -165,7 +165,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"></path>
             </svg>
             Devenir prestataire
-          </NuxtLink>
+          </NuxtLink> -->
         </div>
 
         <!-- Stats rapides mobile -->

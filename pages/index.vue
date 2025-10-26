@@ -777,15 +777,6 @@ const { data: servicesData } = await useLazyAsyncData('services', () => apiStore
 
 // Fonction pour fetch les providers
 const fetchProviders = () => {
-  console.log('🔄 Fetching providers with params:', {
-    page: currentPage.value,
-    limit,
-    search: searchQuery.value || undefined,
-    services: selectedService.value ? [selectedService.value] : undefined,
-    location: selectedLocation.value || undefined,
-    certified: certifiedOnly.value || undefined
-  })
-  
   return apiStore.getProviders({
     page: currentPage.value,
     limit,
@@ -803,7 +794,6 @@ const { data: providersData, pending, error, refresh } = await useLazyAsyncData(
   { watch: [currentPage] } 
 )
 
-console.log(providersData.value)
 // Computed properties
 const availableServices = computed(() => {
   const services = servicesData?.value?.data?.services || []
@@ -869,7 +859,6 @@ const hasActiveFilters = computed(() => {
 // Watcher pour déclencher le fetch quand les paramètres changent
 watch([searchQuery, selectedService, selectedLocation, certifiedOnly], 
   () => {
-    console.log('🔄 Filters changed, refreshing data')
     refresh()
   }, 
   { immediate: false }
@@ -877,36 +866,30 @@ watch([searchQuery, selectedService, selectedLocation, certifiedOnly],
 
 // Methods
 const handleSearch = useDebounceFn(() => {
-  console.log('🔍 Search triggered:', searchQuery.value)
   currentPage.value = 1
   refresh()
 }, 300)
 
 const handleServiceChange = () => {
-  console.log('🔧 Service changed to:', selectedService.value)
   currentPage.value = 1
   refresh()
 }
 
 const handleLocationChange = () => {
-  console.log('📍 Location changed to:', selectedLocation.value)
   currentPage.value = 1
   refresh()
 }
 
 const handleCertifiedChange = () => {
-  console.log('✅ Certified filter changed to:', certifiedOnly.value)
   currentPage.value = 1
   refresh()
 }
 
 const handleSortChange = () => {
-  console.log('📊 Sort changed to:', sortBy.value)
   currentPage.value = 1
   refresh()
 }
 const resetFilters = () => {
-  console.log('🔄 Resetting all filters')
   searchQuery.value = ''
   selectedService.value = ''
   selectedLocation.value = ''
@@ -916,16 +899,13 @@ const resetFilters = () => {
 }
 
 const goToPage = (page: number) => {
-  console.log('🔢 goToPage called with:', page, 'Current page:', currentPage.value, 'Total pages:', totalPages.value)
   
   // Vérification plus stricte
   if (typeof page !== 'number' || page < 1 || page > totalPages.value) {
-    console.warn('❌ Invalid page number:', page)
     return
   }
   
   if (page !== currentPage.value) {
-    console.log('✅ Changing page from', currentPage.value, 'to', page)
     currentPage.value = page
     refresh()
     
@@ -943,13 +923,11 @@ const goToPage = (page: number) => {
 
 // Fonctions pour gérer le drawer
 const openProviderDrawer = (provider: any) => {
-  console.log('🎯 Opening drawer for provider:', provider)
   selectedProvider.value = provider
   isDrawerOpen.value = true
 }
 
 const closeProviderDrawer = () => {
-  console.log('❌ Closing provider drawer')
   isDrawerOpen.value = false
   selectedProvider.value = null
 }
