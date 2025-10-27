@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   
   // Modules
   modules: [
+    '@netlify/nuxt',
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
     '@vueuse/nuxt'

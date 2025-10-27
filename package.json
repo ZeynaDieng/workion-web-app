@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@netlify/nuxt": "^0.2.5",
     "@nuxt/devtools": "^0.8.5",
     "@types/crypto-js": "^4.2.2",
     "nuxt": "^3.6.5"
