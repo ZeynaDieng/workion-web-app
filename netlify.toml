@@ -3,6 +3,7 @@
   command = "npm run build"
   # Dossier de sortie après le build
   publish = ".output/public"
+  functions = ".netlify/functions"
   # Variables d'environnement pour le build
   environment = { NODE_VERSION = "18" }
 

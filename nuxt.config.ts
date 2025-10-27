@@ -67,6 +67,7 @@ export default defineNuxtConfig({
   
   // Nitro configuration for better SEO
   nitro: {
+    preset: 'netlify',
     prerender: {
       routes: ['/sitemap.xml', '/robots.txt']
     },
