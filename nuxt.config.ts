@@ -81,10 +81,12 @@ export default defineNuxtConfig({
   },
 
   // Nitro configuration for better SEO
+
   nitro: {
     preset: "vercel",
     prerender: {
-      routes: ["/sitemap.xml", "/robots.txt"],
+      routes: ["/robots.txt", "/sitemap.xml"],
+      failOnError: false,
     },
     experimental: {
       wasm: true,
