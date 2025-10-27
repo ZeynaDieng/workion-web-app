@@ -1,6 +1,6 @@
 [build]
   # Commande de build pour Nuxt 3
-  command = "npm run generate"
+  command = "npm run build"
   # Dossier de sortie après le build
   publish = ".output/public"
   # Variables d'environnement pour le build
