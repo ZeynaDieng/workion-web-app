@@ -42,7 +42,7 @@
                 <div class="text-sm text-gray-200 font-medium">Prestataires</div>
               </div>
               <div class="text-center">
-                <div class="text-3xl md:text-4xl font-bold text-yellow-400 mb-2">50+</div>
+                <div class="text-3xl md:text-4xl font-bold text-yellow-400 mb-2">20+</div>
                 <div class="text-sm text-gray-200 font-medium">Services</div>
               </div>
               <div class="text-center">
@@ -135,23 +135,23 @@
             </div>
 
             <!-- Tri -->
-            <div class="relative">
+            <!-- <div class="relative">
               <select 
                 v-model="sortBy"
                 @change="handleSortChange"
                 class="appearance-none bg-white border-2 border-gray-200 rounded-xl px-6 py-3 pr-10 text-gray-700 font-medium focus:outline-none focus:ring-4 focus:ring-[#006970] focus:ring-opacity-20 focus:border-[#006970] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
               >
                 <option value="rating">⭐ Mieux notés</option>
-                <option value="reviews">💬 Plus d'avis</option>
-                <option value="recent">🆕 Plus récents</option>
-                <option value="name">🔤 Nom A-Z</option>
+                <option value="reviews">Plus d'avis</option>
+                <option value="recent">Plus récents</option>
+                <option value="name">Nom A-Z</option>
               </select>
               <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
               </div>
-            </div>
+            </div> -->
 
             <!-- Reset filtres -->
             <button 
@@ -500,7 +500,7 @@
         </div>
 
         <!-- Stats finales -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mt-16 max-w-4xl mx-auto">
           <div class="text-center">
             <div class="text-2xl md:text-3xl font-bold text-yellow-400 mb-1">98%</div>
             <div class="text-sm text-gray-200">Satisfaction client</div>
@@ -513,10 +513,10 @@
             <div class="text-2xl md:text-3xl font-bold text-yellow-400 mb-1">100%</div>
             <div class="text-sm text-gray-200">Sécurisé</div>
           </div>
-          <div class="text-center">
+          <!-- <div class="text-center">
             <div class="text-2xl md:text-3xl font-bold text-yellow-400 mb-1">0€</div>
             <div class="text-sm text-gray-200">Frais d'inscription</div>
-          </div>
+          </div> -->
         </div>
       </div>
     </section>

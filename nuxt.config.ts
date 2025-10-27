@@ -52,7 +52,8 @@ export default defineNuxtConfig({
     public: {
       phoneEncryptionKey: process.env.PHONE_ENCRYPTION_KEY,
       apiBase: process.env.API_BASE_URL || 'http://localhost:3000',
-      appUrl: process.env.APP_URL || 'http://localhost:3001'
+      appUrl: process.env.APP_URL || 'http://localhost:3001',
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
     }
   },
 

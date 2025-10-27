@@ -27,13 +27,13 @@
           <!-- Progress Bar -->
           <div class="bg-gray-50 px-6 py-4 border-b border-gray-100">
             <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
-              <span>Étape {{ currentStep }} sur 5</span>
-              <span>{{ Math.round((currentStep / 5) * 100) }}% complété</span>
+              <span>Étape {{ currentStep }} sur {{ publicationMode === 'user' ? 6 : 5 }}</span>
+              <span>{{ Math.round((currentStep / (publicationMode === 'user' ? 6 : 5)) * 100) }}% complété</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2">
               <div 
                 class="bg-gradient-to-r from-[#006970] to-[#008891] h-2 rounded-full transition-all duration-500"
-                :style="{ width: `${(currentStep / 5) * 100}%` }"
+                :style="{ width: `${(currentStep / (publicationMode === 'user' ? 6 : 5)) * 100}%` }"
               ></div>
             </div>
           </div>
@@ -393,8 +393,27 @@
               </div>
             </div>
 
-            <!-- Étape 5: Moyens de contact -->
-            <div v-show="currentStep === 5" class="space-y-6">
+            <!-- Étape 5: Adresse du service (utilisateur connecté uniquement) -->
+            <div v-show="currentStep === 5 && publicationMode === 'user'" class="space-y-6">
+              <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-[#006970]/10 rounded-full mb-4">
+                  <svg class="w-6 h-6 text-[#006970]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Où se déroule le service ?</h2>
+                <p class="text-gray-600">Sélectionnez l'adresse où vous souhaitez recevoir le service</p>
+              </div>
+
+              <GoogleMapPicker
+                v-model="form.address"
+                :api-key="googleMapsApiKey"
+                @address-selected="onAddressSelected"
+              />
+            </div>
+
+            <!-- Étape 6: Moyens de contact -->
+            <div v-show="currentStep === 6 || (currentStep === 5 && publicationMode === 'guest')" class="space-y-6">
               <div class="text-center mb-8">
                 <div class="inline-flex items-center justify-center w-12 h-12 bg-[#006970]/10 rounded-full mb-4">
                   <svg class="w-6 h-6 text-[#006970]" fill="currentColor" viewBox="0 0 20 20">
@@ -449,9 +468,10 @@
                 <h3 class="text-lg font-semibold text-blue-900 mb-4">📋 Récapitulatif</h3>
                 <div class="space-y-2 text-sm">
                   <div><strong>Mode:</strong> {{ publicationMode === 'guest' ? 'Invité' : 'Utilisateur connecté' }}</div>
-                  <div><strong>Type:</strong> {{ form.serviceType === 'self_service' ? 'Self-Service' : 'Service Complet' }}</div>
+                  <div><strong>Type:</strong> {{ form.serviceType === 'self_service' ? 'Service autonome' : 'Service complet' }}</div>
                   <div><strong>Services:</strong> {{ form.services.map(id => getServiceName(id)).join(', ') }}</div>
                   <div v-if="form.price"><strong>Budget:</strong> {{ form.price.toLocaleString() }} FCFA{{ form.negotiable ? ' (négociable)' : '' }}</div>
+                  <div v-if="form.address && publicationMode === 'user'"><strong>Adresse:</strong> {{ form.address.address }}</div>
                 </div>
               </div>
             </div>
@@ -472,7 +492,7 @@
               <div v-else></div>
 
               <button
-                v-if="currentStep < 5"
+                v-if="currentStep < (publicationMode === 'user' ? 6 : 5)"
                 type="button"
                 @click="nextStep"
                 :disabled="!canProceedToNextStep"
@@ -488,7 +508,7 @@
               </button>
 
               <button
-                v-else
+                v-else-if="currentStep === (publicationMode === 'user' ? 6 : 5)"
                 type="submit"
                 :disabled="isSubmitting || !isFormValid"
                 :class="[
@@ -504,7 +524,7 @@
                   Publication en cours...
                 </span>
                 <span v-else class="flex items-center">
-                  🚀 Publier ma demande
+                  Publier ma demande
                 </span>
               </button>
             </div>
@@ -572,7 +592,9 @@ const form = reactive({
   serviceType: '', // 'self_service' ou 'full_service' (obligatoire)
   periodicity: '',
   price: null,
-  negotiable: false
+  negotiable: false,
+  // Adresse pour utilisateur connecté
+  address: null
 })
 
 // API call pour récupérer les services
@@ -648,6 +670,13 @@ const canProceedToNextStep = computed(() => {
     case 4:
       return form.details.trim().length > 10
     case 5:
+      if (publicationMode.value === 'user') {
+        console.log('form.address !== null:', form.address !== null)
+        return form.address !== null // Adresse obligatoire pour utilisateur connecté
+      } else {
+        return true // Mode invité, pas d'étape d'adresse
+      }
+    case 6:
       return true // Dernière étape, toujours valide
     default:
       return false
@@ -694,6 +723,17 @@ const phoneInputProps = {
   disabled: false
 }
 
+// Configuration Google Maps API Key
+const config = useRuntimeConfig()
+const googleMapsApiKey = config.public.googleMapsApiKey || 'YOUR_GOOGLE_MAPS_API_KEY'
+
+// Gestionnaire de sélection d'adresse
+const onAddressSelected = (address) => {
+  console.log('Adresse sélectionnée:', address)
+  form.address = address
+  console.log('form.address:', form.address)
+}
+
 const getServiceName = (serviceId) => {
   const service = availableServices.value?.find(s => s.id === serviceId)
   return service ? service.name : serviceId
@@ -704,7 +744,10 @@ const redirectToLogin = () => {
 }
 
 const nextStep = () => {
-  if (canProceedToNextStep.value && currentStep.value < 5) {
+  const maxSteps = publicationMode.value === 'user' ? 6 : 5
+  console.log('canProceedToNextStep.value:', canProceedToNextStep.value)
+  
+  if (canProceedToNextStep.value && currentStep.value < maxSteps) {
     currentStep.value++
     document.querySelector('#form')?.scrollIntoView({ behavior: 'smooth' })
   }
@@ -723,42 +766,47 @@ const submitRequest = async () => {
   isSubmitting.value = true
 
   try {
+    // Préparer les données selon le mode
     const requestData = {
-      ...form,
-      // Ajouter l'ID utilisateur si connecté, sinon laisser les champs invité
-      ...(publicationMode.value === 'user' && isUserLoggedIn.value ? 
-        { user: currentUser.value?.id } : 
-        {}
-      ),
-      // Nettoyer les données
-      price: form.price || undefined,
-      periodicity: form.periodicity || undefined
+      // Données communes
+      services: form.services,
+      details: form.details,
+      serviceType: form.serviceType,
+      periodicity: form.periodicity || null,
+      price: form.price || null,
+      negotiable: form.negotiable || false,
+      allowCalls: form.allowCalls,
+      allowWhatsApp: form.allowWhatsApp,
+      // Données spécifiques au mode
+      ...(publicationMode.value === 'guest' ? {
+        // Mode invité
+        guestName: form.guestName,
+        guestPhone: form.guestPhone.replaceAll(/[^\d+]/g, ''),
+        guestAddress: form.guestAddress || null,
+      } : {
+        // Mode utilisateur connecté
+        address: form.address // Adresse sélectionnée via Google Maps
+      })
     }
 
-    // Supprimer les champs invité si en mode utilisateur
-    if (publicationMode.value === 'user') {
-      delete requestData.guestName
-      delete requestData.guestPhone
-      delete requestData.guestAddress
-    }
+    console.log('Données à envoyer:', requestData)
 
-    await apiStore.createServiceRequest(requestData)
+    // Appel API
+    const response = await apiStore.createServiceRequest(requestData)
     
-    // Rediriger vers une page de confirmation
+    console.log('Réponse API:', response)
+
+    // Redirection vers la page de confirmation
     await navigateTo('/demande-confirmee')
     
   } catch (error) {
     console.error('Erreur lors de la soumission:', error)
-    
-    const errorMessage = error?.data?.message || 'Une erreur est survenue lors de la publication de votre demande.'
-    alert(`❌ ${errorMessage}\n\nVeuillez réessayer.`)
-    
+    alert(`Une erreur est survenue lors de la publication de votre demande. Veuillez réessayer.\n\n${error?.data?.message || ''}`)
   } finally {
     isSubmitting.value = false
   }
 }
 
-// Pre-fill service if coming from service page
 onMounted(() => {
   if (route.query.service) {
     const serviceId = route.query.service

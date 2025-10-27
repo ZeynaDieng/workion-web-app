@@ -149,7 +149,7 @@ export const useApiStore = defineStore('api', () => {
     if (params?.page) searchParams.append('page', params.page.toString())
     if (params?.limit) searchParams.append('limit', params.limit.toString())
     if (params?.search) searchParams.append('search', params.search)
-    if (params?.location) searchParams.append('location', params.location)
+    if (params?.location) searchParams.append('address', params.location)
     if (params?.certified !== undefined) searchParams.append('certified', params.certified.toString())
     if (params?.services?.length) {
       searchParams.append('services', params.services.join(','));

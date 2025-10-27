@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-16">
+    <section class="bg-gradient-to-r from-[#006970] to-[#008891] text-white py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1 class="text-4xl md:text-6xl font-bold mb-6">
           Centre d'aide
@@ -35,13 +35,13 @@
               </p>
             </div>
             
-            <div class="border-b border-gray-200 pb-6">
+            <!-- <div class="border-b border-gray-200 pb-6">
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Les services sont-ils garantis ?</h3>
               <p class="text-gray-600">
                 Tous nos prestataires sont vérifiés et les services peuvent être évalués par les clients. 
                 Nous encourageons la transparence et la qualité.
               </p>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
