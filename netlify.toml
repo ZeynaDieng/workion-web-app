@@ -3,7 +3,7 @@
   command = "npm run build"
   # Dossier de sortie après le build
   publish = ".netlify/functions-internal"
-  functions = ".netlify/functions"
+  functions = ".netlify/functions-internal"
   # Variables d'environnement pour le build
   environment = { NODE_VERSION = "18" }
 
@@ -22,9 +22,31 @@
   pretty_urls = true
 
 # Redirections pour SPA (Single Page Application)
+# ✅ Servir correctement les fichiers statiques (JS, CSS, images…)
+[[redirects]]
+  from = "/_nuxt/*"
+  to = "/_nuxt/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/favicon.ico"
+  status = 200
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+
+# ✅ Rediriger toutes les autres routes vers la fonction SSR de Nuxt
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server"
+  to = "/.netlify/functions-internal/server"
   status = 200
 
 # Headers de sécurité
